@@ -1,3 +1,9 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package atmsystem;
 import java.util.*;
 
 
@@ -10,18 +16,12 @@ public class ATMSystem {
 		ATM a2 = new ATM("ATM_A2", a.getId());
 		ATM b1 = new ATM("ATM_B1", b.getId());
 		ATM b2 = new ATM("ATM_B2", b.getId());
-
-		// customer picks open an account
-		// List all atm names from bank
-		// prompt customer to choose an atm from the bank
-		// create customer object, check if atm ref. already exists
-		// if it already is in the customer object, then customer can't open another account with the same bank
-		// if not add atm to customer object for later reference
-		// Customer c = new Customer(atm obj); 
+                
 		Customer c = new Customer();
+                
 		c.addAtm(a1);
 		c.addAcct(a1);
+                c.withdraw(a1);
 
 	}
-
 }
