@@ -1,3 +1,4 @@
+package atmsystem;
 import java.util.*;
 	
 /**
@@ -9,6 +10,7 @@ public class ATM
 	
 	private String name;
 	private String id;
+        private final int PREDEFINED_LIMIT = 50;
 	/**
 		Constructor
 	*/
@@ -25,6 +27,16 @@ public class ATM
 	public String getATMName() {
 		return this.name;
 	}
+        
+        public Bank getBank(String atmId) {
+            Bank newBank = new Bank(atmId);
+            return newBank;
+           
+        }
+        
+        public int getLimit() {
+            return this.PREDEFINED_LIMIT;
+        }
 
 
 
