@@ -1,0 +1,4 @@
+Customer c = new Customer();
+c.addAtm(a1);
+c.addAcct(a1);
+c.withdraw(a1);

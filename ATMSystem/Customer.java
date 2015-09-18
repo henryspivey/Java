@@ -2,7 +2,7 @@ package atmsystem;
 import java.util.*;
 
 /**
-	The purpose of this class is to create Customer objects that hold info for use in the ATM network
+ * The purpose of this class is to create Customer objects that hold info for use in the ATM network
 */
 
 public class Customer {
@@ -10,238 +10,216 @@ public class Customer {
 	private ArrayList<ATM> atms = new ArrayList<>();
 	private ArrayList<BankAccount> accounts = new ArrayList<>();
         private ArrayList<Bank> banks = new ArrayList<>();
+        private ArrayList<CashCard> cards = new ArrayList<>();
         private final int INITIAL_BALANCE = 40;
-	public Customer() {
-
-	}
-
-	public void addAtm(ATM atm) {
-		if (verifyATMInfo(atm) == true) {
-                    System.out.println("You already have a bank account with this bank.");
-		} else {
-                    this.atms.add(atm);
-		}
-	}
-	
-	public boolean verifyATMInfo(ATM b) {
-		boolean found = false;
-		if (this.atms.size() == 0) {
-			return false;
-		} else {
-			for (ATM a: this.atms) {
-				if (a.getATMID().equals(b.getATMID())) {
-					found = true;
-				}
-			}
-		}
-		return found;
+        private ATM atm;
+        private CashCard card;
+        private BankAccount account;
+        /**
+         * The constructor for the customer object
+         * @param a This is an ATM and is used to verify account data along with the CashCard
+         * @param c This is a CashCard and is used to verify account data along with the ATM
+         * @param account a BankAccount to hold important data
+         */
+	public Customer(ATM a, CashCard c, BankAccount account) {
+                this.account = account;
+                this.atm = a;
+                this.card = c;
 	}
         
-        // this will be used to verify card numbers against what is entered
-        public boolean verifyCashCard(int number) {
-            /**
-             * Check if the cash card number is associated with this user
-             * if c.getCardNumber() is a card number of an account of this user return true
-             * else return false
-             */
+        /**
+         * This method provides feedback on the state of the user's ATM data
+         * @param atm 
+         */
+	public void addAtm(ATM atm) {
+            if (verifyATMInfo(atm) == true) {
+                System.out.println("You already have a bank account with this bank.");
+            } else {
+                this.atms.add(atm);
+            }
+	}
+	/**
+         * This method verifies the customer's ATM data
+         * @param b The ATM the customer claims to use
+         * @return found if the id of the ATM is found in the customer's ATMs variable
+         */
+	public boolean verifyATMInfo(ATM b) {
+            boolean found = false;
+            if (this.atm == null) {
+                return false;
+            } else if (this.atm.getATMID().equals(b.getATMID())) {
+                found = true;
+            } else {
+                System.out.println("Account data not found for account "+ this.card.getCardNumber() +
+                        " at Bank " + this.atm.getATMID());
+            }
+            return found;
+	}
+        
+        /**
+         * This method verifies the CashCard data input by the customer along with its expiration date
+         * @param number A number entered to check against entered CashCard's number
+         * @param c The CashCard of the customer to verify
+         * @return verified if the entered data is correct and the card is valid
+         */
+        public boolean verifyCashCard(int number, CashCard c) {
+ 
+            Date today = Calendar.getInstance().getTime(); // http://alvinalexander.com/blog/post/java/determine-today-date
             int cardNumber = number;
-            int i = 0;
             boolean verified = false;
-            for(BankAccount account: this.accounts) {
-                ArrayList<CashCard> cards = account.getCards();
-                while(i < cards.size()){
-                    CashCard current = cards.get(i);
-                    if(current.getCardNumber() == cardNumber) {
-                        if(current.getId().equals(account.getBankID(current))) {
-                            System.out.println("Welcome to Bank " + account.getBankID(current));
-                            verified = true;
-                        }
-                    }
-                    else {
-                        System.out.println("Cashcard not recognized.");
-                        verified = false;
-                    }
-                    i++;
+            if (this.card.getId().equals(this.account.getBankID(c))) {
+                if (c.getExpirationDate().after(today)) {
+                    System.out.println("Welcome to Bank " + account.getBankID(c));
+                    verified = true;
+                } else {
+                    System.out.println(c.getExpirationDate());
+                    System.out.println("Card is expired.");
+                    verified = false;
                 }
+            } else {
+                System.out.println("Cashcard has ID " + this.card.getId()+ " which is not recognized at Bank " +
+                            this.account.getBankID(c));
+                verified = false;
             }
             return verified;
+        }
+
+        /**
+         * This method creates a card number from scanner input
+         * @param c The CashCard to make a number for
+         * @param sc This scanner to retrieve data
+         */
+        public void makeCardNumber(CashCard c, Scanner sc) {
+            int number;
+            System.out.println("Enter your card number: ");
+            number = sc.nextInt();
+            System.out.println(number);
+            c.makeCardNumber(number);
 	}
-        
-        public void makeCardNumber(CashCard c) {
-            Scanner sc = new Scanner(System.in);
-            boolean entered = false;
-            do {
-                System.out.println("Your desired card number: ");
-                int input = sc.nextInt();
-                c.makeCardNumber(input);
-                entered = true;
-                System.out.println("Number set!");
-                
-            } while (entered = false);
-            
-	}
+        /**
+         * This method adds a CashCard to the users CashCards arraylist
+         * @param c The CashCard to add
+         */
+        public void addCard(CashCard c) {
+            this.cards.add(c);
+        }
+        /**
+         * This method creates a password for the CashCard from scanner input
+         * @param c The CashCard to make a password for
+         * @param sc The scanner to read in data
+         */
+        public void createCardPassword(CashCard c, Scanner sc) { 
+            System.out.println("Enter your card password: ");
+            String password = sc.next();
+           
+            System.out.println(password);
+            c.createPassword(password);
+        }
+        /**
+         * This method adds an account to the users account arraylist
+         * @param a The ATM to add to the account
+         */
 	public void addAcct(ATM a) {
 		BankAccount account = new BankAccount(a,INITIAL_BALANCE);
 		accounts.add(account); // adds account data to customer object
                 banks.add(a.getBank(a.getATMID()));
-                // get card from account and set its password
-         
-                ArrayList cards = account.getCards();
-                
-                // check if bank account is in cards
-                int i = 0;
-                while (i < cards.size()) {
-                    CashCard current = (CashCard) cards.get(i);
-                    // set the cash card number to entered number
-                    makeCardNumber(current);
-                    current.createPassword(createPassword());
-                    // checks to see if the particular account in question is in the cards object
-                    /*if(current.getCardNumber() == account.getAccountNumber()) {
-                        // prompt for password here
-                        
-                        System.out.println("Your cashcard number  " + current.getCardNumber());
-                        
-                    }*/
-                    i++;
-                }
-                
-	}
+ 	}
+
+        /**
+         * This method retrieves a password from scanner input
+         * @param sc The scanner to read data from
+         * @return String The password retrieved from scanner input
+         */
+        public String getPassword(Scanner sc) {
+            String password = sc.next();
+            return password;
+        }
         
-        public void listAccountData() {
-            int number_of_accounts = this.accounts.size();
+        /**
+         * This method's purpose is to verify customer data which is later needed to successfully withdraw 
+         * @param sc The scanner to read in input
+         * @param c The CashCard to verify
+         * @return verified if the data entered is valid 
+         */
+        public boolean loginToAccount(Scanner sc, CashCard c) {
+  
+            Bank bank = new Bank(sc.next()); // read in a bank id
+            ATM a = new ATM(sc.next(), bank.getId()); // make new ATM with bank id and ATM choice
             
-            for(int i = 0; i < number_of_accounts; i++)
-            {
-                BankAccount currentAccount = this.accounts.get(i);
-                ArrayList cards = currentAccount.getCards();
-                CashCard currentCashCard = (CashCard) cards.get(cards.size()-1);
-                System.out.println(currentCashCard.getCardNumber());
-                System.out.println(currentCashCard.getId());
-                
-               
-            }
-        }
-        
-        public boolean enterCardNumber(int number) {
-            return verifyCashCard(number);
-        }
-        public Bank getBanks() {
-            for (Bank n : this.banks) {
-                return n;
-            }
-        }
-        
-        public String createPassword() {
-            String password;
-            Scanner sc = new Scanner(System.in);
-            boolean entered  = false;
-            do {
-                System.out.println("Enter a password to protect your cashcard: ");
-                String input = sc.next();
-                password = input;
-                entered = true;
-                System.out.println("Password set!");
-                return password;
-            } while(entered = false);
-            
-        }
-        
-        public String getPassword() {
-            boolean entered = false;
-            do {
-                System.out.println("Please enter your password for your cash card:  ");
-                Scanner sc = new Scanner(System.in);
-                String password = sc.next();
-                return password;
-            }while (entered = false);
-            
-        }
-        
-        public boolean loginToAccount(ATM a) {
-            /*
-            Take in atm
-            check if atm exists with verify atm info
-            if that is true then we ask for a card number
-            get the card number and verify with verifyCashCard
-            if that is true then we ask for the password
-            if password matches then return true
-            
-            */
             boolean verified = false;
-            if(verifyATMInfo(a)) {
-                Scanner sc = new Scanner(System.in);
-                boolean entered = false;
-                int cardNumber;
-                do {
-                    System.out.println("Your card number: ");
-                    cardNumber = sc.nextInt();
-                    entered = true;
-                } while (entered = false);
-                if(verifyCashCard(cardNumber)) {
+            if(verifyATMInfo(a)) { 
+                int cardNumber = c.getCardNumber();
+                String password = c.getPassword();
+                
+                if(verifyCashCard(cardNumber,c)) { // needs to check if user has cardnumber data in instance variable
                     Bank retrieved = a.getBank(a.getATMID());
-                    int i = 0;
-                    for(BankAccount account: this.accounts) {
-                        ArrayList<CashCard> cards = account.getCards();
-                        while (i < cards.size()) {
-                            CashCard current = cards.get(i);
-                            String password = getPassword();
-                            if (retrieved.verifyPassword(current, password)) {
-                                verified = true;
-                                System.out.println("Successfully logged in. ");
-                            }
-                            while (!verified) {
-                                System.out.println("Password incorrect. Please enter it again: ");
-                                password = getPassword();
-                                if(retrieved.verifyPassword(current,password)) {
-                                    verified = true;
-                                    System.out.println("Successfully logged in. ");
-                                }
-                            } 
-                            i++;
+                    if (retrieved.verifyPassword(c, password)) {
+                        verified = true;
+                        System.out.println("Successfully logged in. ");
+                    } else {
+                        System.out.println("Password incorrect. Please enter it again: ");
+                    }
+                    while (!verified) {
+                        System.out.println("Password incorrect. Please enter it again: ");
+                        password = getPassword(sc);
+                        if (retrieved.verifyPassword(c, password)) {
+                            verified = true;
+                            System.out.println("Successfully logged in. ");
                         }
                     }
+
                 } 
             }
             return verified;
         }
         /**
-         * 
-         * @param a The ATM that is being withdrawn from
+         * This methods verifies entered data and withdraws amount entered from an account
+         * @param sc The scanner object to read in data
          * Precondition: The amount must be greater than 0 and less 
-         * than or equal to the predefined limit for the ATM
+         * than or equal to the predefined limit for the ATM. All data must be verified to successfully withdraw
+         * Postcondition: The amount must be deducted from the account
          */
-        public void withdraw(ATM a) {
-            if (loginToAccount(a)) // if they have logged in successfully then proceed
-            {
-                Bank retrieved = new Bank(a.getATMID());
-                ArrayList bankAccounts = retrieved.retrieveAccounts();
-                int accountSize = bankAccounts.size();
-                int i = 0;
-                Scanner sc = new Scanner(System.in);
-                System.out.print("Please enter an amount to withdraw: $");
-                int amount = sc.nextInt();
-                boolean verified = false;
-                if(amount < 0)
-                {
-                    System.out.println("Please enter an amount greater than $0.00");
-                    verified = false;
-                }
-                else if (amount >= a.getLimit()) {
-                    verified = false;
-                    while (!verified) {
-                        System.out.println("Amount entered is greater than the limit for this ATM. \n"
-                                + "Please enter a different amount: ");
-                        if (amount > 0 && amount <= a.getLimit()) {
-                            verified = true;
+        public void withdraw(Scanner sc) {
+            int balance = this.account.getBalance();
+            String password = sc.next();
+            System.out.println(password);
+            while(sc.hasNextLine()) {
+                if (!password.equals(this.card.getPassword())) {
+                    System.out.println("Password incorrect. Please enter it again: ");
+                    password = sc.next();
+                    System.out.println(password);
+                } else {
+                    int amount = 0;
+                    while(sc.hasNextInt()) {
+                        amount = sc.nextInt();
+                        System.out.println("Enter an amount to withdraw: $");
+                        System.out.println(amount);
 
-                            while(i < accountSize) {
-                                BankAccount current = (BankAccount)bankAccounts.get(i);
-                                current.withdraw(amount);
-                                i++;
-                            }
+                    if (amount < 0)
+                    {
+                        System.out.println("$"+amount+" is not valid.  Please enter an amount greater than $0.00");
+
+                    }else if (amount >= this.atm.getLimit())
+                    {
+                        System.out.println("Amount entered is greater than the limit for this ATM. \n"
+                                                + "Please enter a different amount: ");       
+                        amount = sc.nextInt();
+                        if (amount > 0 && amount <= this.atm.getLimit())
+                        {
+                            balance -= amount;
+                            System.out.println("$" + amount + " is withdrawn from  your account. The remaining "
+                                    + "balance of this account is $" + balance + ".  If you have more transactions, "
+                                    + "enter the amount or quit.");
                         }
+                    }else 
+                    { 
+                        balance -= amount;
+                        System.out.println("$" + amount + " is withdrawn from  your account. The remaining "
+                                + "balance of this account is $" + balance + ".  If you have more transactions, "
+                                + "enter the amount or quit.");
+                    }
                     }
                 }
             }
         }
-}
+    }
