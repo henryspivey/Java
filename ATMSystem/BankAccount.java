@@ -16,8 +16,10 @@ public class BankAccount {
         private int balance;
 
 	/**
-		Constructor
-	*/
+         * The constructor for the BankAccount object
+         * @param a The ATM to add to the BankAccount
+         * @param balance The initial balance for the BankAccount
+         */
 	public BankAccount(ATM a, int balance)
 	{	
             CashCard card = new CashCard(a);
@@ -26,55 +28,63 @@ public class BankAccount {
             String id = a.getATMID();
             card.setCardId(id);
             cards.add(card); // bank account has a set of cashcards 
-            this.balance = balance;
-            addAccount();
+            this.balance = balance;   
 	}
 
-	// separate method for make number which is random 6-8 numbers
+	/**
+         * This method creates a random account number for the BankAccount object to make it a more realistic experience
+         */
 	public void makeRandomAccountNumber () {
 		// make  random number here
 		Random random = new Random();
 		int randomNumber = random.nextInt((UPPER_LIMIT-LOWER_LIMIT)+1)+LOWER_LIMIT;
 		this.accountNumber = randomNumber;
 	}
-        
-        public void addAccount() {
-            b.addAccount(this);
+        /**
+         * This method adds an account to the BankAccount object
+         * @param a The BankAccount to add
+         */
+        public void addAccount(BankAccount a) {
+            b.addAccount(a);
         }
-
+        /**
+         * This method returns the BankAccount's accountNumber
+         * @return The account number for the BankAccount
+         */
 	public int getAccountNumber() {
 		return this.accountNumber;
 	}
-
+        
+        /**
+         * This method sets the CashCard's BankAccount number
+         * @param c The CashCard to add a number to
+         */
 	public void setCashCardNumber(CashCard c) {
             c.setCardBankAccountNumber(this.accountNumber);
 	}
-        
+        /**
+         * This method gets the BankId for a given CashCard object. It is useful for verifying BankAccount data
+         * @param c The CashCard to get the ID from
+         * @return The ID of the CashCard
+         */
         public String getBankID(CashCard c) {
             return c.getId(); 
-       }
+        }
         
+        /**
+         * This method returns the Customer's BankAccount cards arraylist
+         * @return The cards arraylist
+         */
         public ArrayList getCards() {
             return this.cards;
         }
-        
+        /**
+         * This method returns the balance for the BankAccount 
+         * @return The balance for the BankAccount
+         */
         public int getBalance() {
             return this.balance;
         }
         
-        public boolean acceptOrReject(CashCard c, String password) {
-            if(c.getPassword().equals(password)) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
         
-        public void withdraw(int amount) {
-            this.balance -= amount;
-        }
-
-
-
 }
