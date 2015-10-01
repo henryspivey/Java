@@ -104,7 +104,11 @@ public class CalendarExample {
     }
     
     public static String format(GregorianCalendar calendar){
+<<<<<<< HEAD:CalendarExample/src/CalendarExample.java
         SimpleDateFormat fmt = new SimpleDateFormat("MM/dd/YYYY");
+=======
+        SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
+>>>>>>> cd7edec5acbac82d422094c69250c3b940435291:CalendarExample/CalendarExample/src/CalendarExample.java
         fmt.setCalendar(calendar);
         String dateFormatted = fmt.format(calendar.getTime());
         return dateFormatted;
@@ -175,11 +179,26 @@ public class CalendarExample {
 							
 						} else {
 							System.out.println(title + "  " +startTime);
+<<<<<<< HEAD:CalendarExample/src/CalendarExample.java
 						}						
 					}
 				}
 			}
 			resetCalendar(cal);
+=======
+						}
+						
+						
+					}
+					
+					
+				}
+			}
+			
+			resetCalendar(cal);
+			
+			
+>>>>>>> cd7edec5acbac82d422094c69250c3b940435291:CalendarExample/CalendarExample/src/CalendarExample.java
 			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
 			input = sc.nextLine();
 			processInput(input,cal);
@@ -200,7 +219,10 @@ public class CalendarExample {
 			System.out.println("[OPTIONAL] Enter an ending time for your event (24 Hour Format): "); // get the ending time
 			input = sc.nextLine();
 			eventData.add(input);
+<<<<<<< HEAD:CalendarExample/src/CalendarExample.java
 			
+=======
+>>>>>>> cd7edec5acbac82d422094c69250c3b940435291:CalendarExample/CalendarExample/src/CalendarExample.java
 			String dateKey = format(dateToSet);
 			events.put(dateKey, eventData);
 			saveEvents(events);
@@ -208,6 +230,7 @@ public class CalendarExample {
 			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
 			input = sc.nextLine();
 			processInput(input,cal);
+<<<<<<< HEAD:CalendarExample/src/CalendarExample.java
 		} else if (input.equalsIgnoreCase("E")) {
 			
 			ArrayList<Map<String, ArrayList<String>>> dateEvents = temp;
@@ -259,6 +282,8 @@ public class CalendarExample {
 			input = sc.nextLine();
 			processInput(input,cal);
 			
+=======
+>>>>>>> cd7edec5acbac82d422094c69250c3b940435291:CalendarExample/CalendarExample/src/CalendarExample.java
 		}
     	
     }
@@ -272,7 +297,10 @@ public class CalendarExample {
     	String input = sc.nextLine();
     	while(!input.equalsIgnoreCase("Q")) {
     		processInput(input,cal);
+<<<<<<< HEAD:CalendarExample/src/CalendarExample.java
     		System.out.println(input);
+=======
+>>>>>>> cd7edec5acbac82d422094c69250c3b940435291:CalendarExample/CalendarExample/src/CalendarExample.java
     		if(input.equalsIgnoreCase("Q")) {
     			break;
     		}
