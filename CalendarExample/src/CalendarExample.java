@@ -1,4 +1,6 @@
 import java.util.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.*;
 import java.text.SimpleDateFormat;
 
@@ -45,7 +47,9 @@ public class CalendarExample {
         // print calendar header
         System.out.println("   " + months[M] + " " + Y);
         System.out.println("Sun Mon Tue Wed Thur Fri Sat");
-
+        GregorianCalendar now = new GregorianCalendar();
+        int today = now.get(Calendar.DAY_OF_MONTH);
+        int month = now.get(Calendar.MONTH)+1; // +1 for offset of index
         // starting day
         int d = day(M, 1, Y);
 
@@ -54,10 +58,15 @@ public class CalendarExample {
             System.out.print("    ");
         for (int i = 1; i <= days[M]; i++) {
         	// if we're at the end of the week or the date equals the number of days for the month, println();
-            System.out.printf("%3d ", i);
+        	if (i == today && month == M) {
+        		System.out.print("["+ i + "]");
+        	} else {
+        		System.out.printf("%3d ", i);
+        	}
+            
             if (((i + d) % 7 == 0) || (i == days[M])) System.out.println();
         }
-        System.out.println("Enter P for previous day or N for next day or Menu for Main Menu: ");
+        System.out.println("Enter P for previous month or N for next month or Menu for Main Menu: ");
 
     }
     public static void printDay(GregorianCalendar cal) {
@@ -70,7 +79,7 @@ public class CalendarExample {
     	System.out.print(", ");
     	System.out.print(cal.get(Calendar.YEAR));
     	System.out.println();
-    	
+    	System.out.println("Enter P for previous day or N for next day or Menu for Main Menu: ");
     }
     
     public static void resetCalendar(GregorianCalendar cal) {
@@ -97,14 +106,14 @@ public class CalendarExample {
     }
     
     public static String format(GregorianCalendar calendar){
-        SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
+        SimpleDateFormat fmt = new SimpleDateFormat("MM/dd/YYYY");
         fmt.setCalendar(calendar);
         String dateFormatted = fmt.format(calendar.getTime());
         return dateFormatted;
     }
-    public static void processInput(String input, GregorianCalendar cal) {
+    public static void processInput(String input, GregorianCalendar cal, Scanner sc) {
     	Map<String, ArrayList<String>> events = new HashMap<String, ArrayList<String>>();
-    	Scanner sc = new Scanner(System.in);
+    	// Scanner sc = new Scanner(System.in);
     	if(input.equalsIgnoreCase("V")) {
 			System.out.println("[D]ay view or [M]view? ");
 			input = sc.nextLine();
@@ -122,8 +131,9 @@ public class CalendarExample {
 			    		System.out.println();
 			    	}
 					input = sc.nextLine();
-					processInput(input, cal);
+					processInput(input, cal, sc);
 				}
+				processInput(input, cal, sc);
 
 			} else if (input.equalsIgnoreCase("D")) {
 				printDay(cal);
@@ -139,16 +149,16 @@ public class CalendarExample {
 			    		System.out.println();
 			    	}
 					input = sc.nextLine();
-					processInput(input, cal);
+					processInput(input, cal, sc);
 				}
 
 			
-			processInput(input,cal);
+			processInput(input, cal, sc);
 			} 
     	}else if (input.equalsIgnoreCase("menu")) {
 			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
 			input = sc.nextLine();
-			processInput(input, cal);
+			processInput(input, cal, sc);
 		} else if (input.equalsIgnoreCase("G")) {
 			ArrayList<Integer> datestuff = dateParser(sc);
 			cal.set(datestuff.get(0), datestuff.get(1), datestuff.get(2));
@@ -168,21 +178,14 @@ public class CalendarExample {
 							
 						} else {
 							System.out.println(title + "  " +startTime);
-						}
-						
-						
+						}						
 					}
-					
-					
 				}
 			}
-			
 			resetCalendar(cal);
-			
-			
 			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
 			input = sc.nextLine();
-			processInput(input,cal);
+			processInput(input, cal, sc);
 		} else if (input.equalsIgnoreCase("C")) {
 			ArrayList<Integer> datestuff = dateParser(sc);
 			GregorianCalendar dateToSet = new GregorianCalendar(datestuff.get(0), datestuff.get(1), datestuff.get(2));
@@ -200,13 +203,115 @@ public class CalendarExample {
 			System.out.println("[OPTIONAL] Enter an ending time for your event (24 Hour Format): "); // get the ending time
 			input = sc.nextLine();
 			eventData.add(input);
+			
 			String dateKey = format(dateToSet);
 			events.put(dateKey, eventData);
 			saveEvents(events);
 			
 			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
 			input = sc.nextLine();
-			processInput(input,cal);
+			processInput(input, cal, sc);
+		} else if (input.equalsIgnoreCase("E")) {
+			
+			ArrayList<Map<String, ArrayList<String>>> dateEvents = temp;
+			if(!dateEvents.isEmpty()) { // if there are dates associated with a day, print them
+				for(int i = 0; i < dateEvents.size(); i++) {
+					Set<String> keySet =dateEvents.get(i).keySet();
+					for(String key: keySet) {
+						ArrayList<String> value = dateEvents.get(i).get(key);
+						String title = value.get(0);
+						String startTime = value.get(1);
+						if(value.size() > 1) {
+							String endTime = value.get(2);
+							System.out.println(title + "  " + key + " " +startTime + " - " + endTime);
+						} else {
+							System.out.println(title + "  " +startTime);
+						}						
+					}
+				}
+			}
+			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
+			input = sc.nextLine();
+			processInput(input, cal, sc);
+			
+		} else if (input.equalsIgnoreCase("D")) {
+			ArrayList<Map<String, ArrayList<String>>> dateEvents = temp;
+			System.out.println("[S]elected or [A]ll?");
+			input = sc.nextLine();
+			if(input.equalsIgnoreCase("s")) {
+				System.out.println("Enter date (MM/DD/YYYY): ");
+				input = sc.nextLine();
+				System.out.println(dateEvents.isEmpty());
+				if(!dateEvents.isEmpty()) { // if there are dates associated with a day, print them
+					for(int i = 0; i < dateEvents.size(); i++) {
+						Set<String> keySet =dateEvents.get(i).keySet();
+						for(String key: keySet) {
+							if(input.equals(key)) {
+								temp.remove(dateEvents.get(i));
+								System.out.println("Event Deleted");
+							}					
+						}
+					}
+				}
+			} else if (input.equalsIgnoreCase("a")) {
+				if(!dateEvents.isEmpty()) { // if there are dates associated with a day, print them
+					for(int i = 0; i < dateEvents.size(); i++) {
+						Set<String> keySet =dateEvents.get(i).keySet();
+						for(String key: keySet) {
+							temp.removeAll(dateEvents);
+							System.out.println("All events deleted");
+						}
+					}
+				}
+			}
+			
+			
+			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
+			input = sc.nextLine();
+			processInput(input, cal, sc);
+			
+		} else if (input.equalsIgnoreCase("L")) {
+			int month = 0;
+			int day = 0;
+			int year = 0;
+			ArrayList<String> eventData = new ArrayList<>();
+			
+			File file = new File("/Users/spivotron/Desktop/Eclipse/CalendarExample/bin/input.txt");
+		    try {
+		        Scanner fileScan = new Scanner(file);
+		        while (fileScan.hasNext()) {
+		        	
+		            year  = fileScan.nextInt();
+		            month = fileScan.nextInt()-1;
+		            day   = fileScan.nextInt();
+		            
+		            GregorianCalendar dateToSet = new GregorianCalendar(year, month, day);
+		            String dateKey = format(dateToSet);
+		            
+		            fileScan.nextLine();
+		            input = fileScan.nextLine(); // get the title 
+					eventData.add(input); 
+					
+					input = fileScan.nextLine(); // get the starting time
+					eventData.add(input);
+					
+					input = fileScan.nextLine(); // get the ending time
+					eventData.add(input);
+		          
+		            events.put(dateKey, eventData);
+					saveEvents(events);
+		            
+		        }
+		        
+		    } 
+		    catch (FileNotFoundException e) {
+		        e.printStackTrace();
+		    }
+		
+			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
+			input = sc.nextLine();
+			processInput(input, cal, sc);
+			
 		}
     	
     }
@@ -219,7 +324,8 @@ public class CalendarExample {
     	System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
     	String input = sc.nextLine();
     	while(!input.equalsIgnoreCase("Q")) {
-    		processInput(input,cal);
+    		processInput(input,cal, sc);
+    		System.out.println(input);
     		if(input.equalsIgnoreCase("Q")) {
     			break;
     		}
