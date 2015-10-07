@@ -45,7 +45,9 @@ public class CalendarExample {
         // print calendar header
         System.out.println("   " + months[M] + " " + Y);
         System.out.println("Sun Mon Tue Wed Thur Fri Sat");
-
+        GregorianCalendar now = new GregorianCalendar();
+        int today = now.get(Calendar.DAY_OF_MONTH);
+        int month = now.get(Calendar.MONTH)+1; // +1 for offset of index
         // starting day
         int d = day(M, 1, Y);
 
@@ -54,7 +56,12 @@ public class CalendarExample {
             System.out.print("    ");
         for (int i = 1; i <= days[M]; i++) {
         	// if we're at the end of the week or the date equals the number of days for the month, println();
-            System.out.printf("%3d ", i);
+        	if (i == today && month == M) {
+        		System.out.print("["+ i + "]");
+        	} else {
+        		System.out.printf("%3d ", i);
+        	}
+            
             if (((i + d) % 7 == 0) || (i == days[M])) System.out.println();
         }
         System.out.println("Enter P for previous day or N for next day or Menu for Main Menu: ");
@@ -97,7 +104,11 @@ public class CalendarExample {
     }
     
     public static String format(GregorianCalendar calendar){
+<<<<<<< HEAD:CalendarExample/src/CalendarExample.java
+        SimpleDateFormat fmt = new SimpleDateFormat("MM/dd/YYYY");
+=======
         SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy");
+>>>>>>> cd7edec5acbac82d422094c69250c3b940435291:CalendarExample/CalendarExample/src/CalendarExample.java
         fmt.setCalendar(calendar);
         String dateFormatted = fmt.format(calendar.getTime());
         return dateFormatted;
@@ -168,6 +179,13 @@ public class CalendarExample {
 							
 						} else {
 							System.out.println(title + "  " +startTime);
+<<<<<<< HEAD:CalendarExample/src/CalendarExample.java
+						}						
+					}
+				}
+			}
+			resetCalendar(cal);
+=======
 						}
 						
 						
@@ -180,6 +198,7 @@ public class CalendarExample {
 			resetCalendar(cal);
 			
 			
+>>>>>>> cd7edec5acbac82d422094c69250c3b940435291:CalendarExample/CalendarExample/src/CalendarExample.java
 			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
 			input = sc.nextLine();
 			processInput(input,cal);
@@ -200,6 +219,10 @@ public class CalendarExample {
 			System.out.println("[OPTIONAL] Enter an ending time for your event (24 Hour Format): "); // get the ending time
 			input = sc.nextLine();
 			eventData.add(input);
+<<<<<<< HEAD:CalendarExample/src/CalendarExample.java
+			
+=======
+>>>>>>> cd7edec5acbac82d422094c69250c3b940435291:CalendarExample/CalendarExample/src/CalendarExample.java
 			String dateKey = format(dateToSet);
 			events.put(dateKey, eventData);
 			saveEvents(events);
@@ -207,6 +230,60 @@ public class CalendarExample {
 			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
 			input = sc.nextLine();
 			processInput(input,cal);
+<<<<<<< HEAD:CalendarExample/src/CalendarExample.java
+		} else if (input.equalsIgnoreCase("E")) {
+			
+			ArrayList<Map<String, ArrayList<String>>> dateEvents = temp;
+			if(!dateEvents.isEmpty()) { // if there are dates associated with a day, print them
+				for(int i = 0; i < dateEvents.size(); i++) {
+					Set<String> keySet =dateEvents.get(i).keySet();
+					for(String key: keySet) {
+						ArrayList<String> value = dateEvents.get(i).get(key);
+						String title = value.get(0);
+						String startTime = value.get(1);
+						if(value.size() > 1) {
+							String endTime = value.get(2);
+							System.out.println(title + "  " + key + " " +startTime + " - " + endTime);
+						} else {
+							System.out.println(title + "  " +startTime);
+						}						
+					}
+				}
+			}
+			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
+			input = sc.nextLine();
+			processInput(input,cal);
+			
+		} else if (input.equalsIgnoreCase("D")) {
+			ArrayList<Map<String, ArrayList<String>>> dateEvents = temp;
+			System.out.println("[S]elected or [A]ll?");
+			input = sc.nextLine();
+			if(input.equalsIgnoreCase("s")) {
+				System.out.println("Enter date (MM/DD/YYYY): ");
+				input = sc.nextLine();
+				System.out.println(dateEvents.isEmpty());
+				if(!dateEvents.isEmpty()) { // if there are dates associated with a day, print them
+					for(int i = 0; i < dateEvents.size(); i++) {
+						Set<String> keySet =dateEvents.get(i).keySet();
+						for(String key: keySet) {
+							if(input.equals(key)) {
+								temp.remove(dateEvents.get(i));
+								System.out.println("Event Deleted");
+							}					
+						}
+					}
+				}
+			} else if (input.equalsIgnoreCase("a")) {
+				
+			}
+			
+			
+			System.out.println("Select one of the following options: \n[L]oad   [V]iew by  [C]reate, [G]o to [E]vent list [D]elete  [Q]uit");
+			input = sc.nextLine();
+			processInput(input,cal);
+			
+=======
+>>>>>>> cd7edec5acbac82d422094c69250c3b940435291:CalendarExample/CalendarExample/src/CalendarExample.java
 		}
     	
     }
@@ -220,6 +297,10 @@ public class CalendarExample {
     	String input = sc.nextLine();
     	while(!input.equalsIgnoreCase("Q")) {
     		processInput(input,cal);
+<<<<<<< HEAD:CalendarExample/src/CalendarExample.java
+    		System.out.println(input);
+=======
+>>>>>>> cd7edec5acbac82d422094c69250c3b940435291:CalendarExample/CalendarExample/src/CalendarExample.java
     		if(input.equalsIgnoreCase("Q")) {
     			break;
     		}
