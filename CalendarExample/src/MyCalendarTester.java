@@ -6,7 +6,7 @@ import java.io.PrintStream;
 import java.lang.*;
 import java.text.SimpleDateFormat;
 
-public class CalendarExample { 
+public class MyCalendarTester { 
 	
 	private static ArrayList<Map<String, ArrayList<String>>> temp = new ArrayList<>();
 	
